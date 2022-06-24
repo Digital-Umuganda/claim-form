@@ -75,6 +75,8 @@ function validationform() {
       },
     };
 
+    const ticketUrl = "https://crm.mbaza.dev.cndp.org.rw/api/v1/tickets";
+
     (async () => {
       const loaderEl = document.querySelector("#loading");
       loaderEl.innerHTML = "Mutegereze...";
@@ -86,23 +88,36 @@ function validationform() {
         },
         body: params,
       });
-      loaderEl.innerHTML="";
       const signinResponse = rawResponse.json();
       console.log(signinResponse);
-    })();
 
-    const ticketUrl = "https://crm.mbaza.dev.cndp.org.rw/api/v1/tickets";
-    const ticketParams = {
-      title: `${firstName} ${otherName}-${phoneNumber}`,
-      group_id: "Users_id",
-      customer: `${phoneNumber}@email.com`,
-      article: {
-        subject: "Website form ticket",
-        body: `${firstName} ${otherName}\n${nationId}\n${phoneNumber}\nDistrict:${districtName}\nSector:sectorname\n\nMessage: ${visitorMessage}`,
-        type: "note",
-        internal: false,
-      },
-    };
+      const ticketParams = {
+        title: `${firstName} ${otherName}-${phoneNumber}`,
+        group_id: signinResponse.id,
+        customer: `${phoneNumber}@email.com`,
+        article: {
+          subject: "Website form ticket",
+          body: `${firstName} ${otherName}\n${nationId}\n${phoneNumber}\nDistrict:${districtName}\nSector:sectorname\n\nMessage: ${visitorMessage}`,
+          type: "note",
+          internal: false,
+        },
+      };
+
+      const ticketResponse = await fetch(ticketUrl, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: ticketParams,
+      });
+
+      console.log(ticketResponse.json());
+
+      loaderEl.innerHTML = "";
+
+      form.reset();
+    })();
   }
 }
 
