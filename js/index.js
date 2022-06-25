@@ -79,6 +79,8 @@ function validationform() {
 
     (async () => {
       const loaderEl = document.querySelector("#loading");
+      try {
+        
       loaderEl.innerHTML = "Mutegereze...";
       const rawResponse = await fetch(signinUrl, {
         method: "POST",
@@ -117,6 +119,10 @@ function validationform() {
       loaderEl.innerHTML = "";
 
       form.reset();
+      } catch (error) {
+        loaderEl.innerHTML = "";
+        alert(error?.message)
+      }
     })();
   }
 }
