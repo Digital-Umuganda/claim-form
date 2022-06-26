@@ -62,7 +62,7 @@ function validationform() {
   }
 
   if (isValid) {
-    const signinUrl = "https://crm.mbaza.dev.cndp.org.rw/api/v1/husers";
+    const signinUrl = "https://crm.mbaza.dev.cndp.org.rw/api/v1/users";
     const params = {
       firstname: firstName,
       lastname: otherName,
@@ -80,48 +80,48 @@ function validationform() {
     (async () => {
       const loaderEl = document.querySelector("#loading");
       try {
-        
-      loaderEl.innerHTML = "Mutegereze...";
-      const rawResponse = await fetch(signinUrl, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: params,
-      });
-      const signinResponse = rawResponse.json();
-      console.log(signinResponse);
+        loaderEl.innerHTML = "Mutegereze...";
+        const { data } = await axios.post(signinUrl, params, {
+          headers: {
+            Authorization:
+              "Bearer Br1sd8BN024Nzt0_QR0WSG14fdXtUYDMVqmWvJe2Df5HIYZwHlPteDjY0ScwZA6z",
+            "Content-Type": "application/json",
+          },
+        });
+        console.log(data);
 
-      const ticketParams = {
-        title: `${firstName} ${otherName}-${phoneNumber}`,
-        group_id: signinResponse.id,
-        customer: `${phoneNumber}@email.com`,
-        article: {
-          subject: "Website form ticket",
-          body: `${firstName} ${otherName}\n${nationId}\n${phoneNumber}\nDistrict:${districtName}\nSector:sectorname\n\nMessage: ${visitorMessage}`,
-          type: "note",
-          internal: false,
-        },
-      };
+        const ticketParams = {
+          title: `${firstName} ${otherName}-${phoneNumber}`,
+          group_id: data.id,
+          customer: `${phoneNumber}@email.com`,
+          article: {
+            subject: "Website form ticket",
+            body: `${firstName} ${otherName}\n${nationId}\n${phoneNumber}\nDistrict:${districtName}\nSector:sectorname\n\nMessage: ${visitorMessage}`,
+            type: "note",
+            internal: false,
+          },
+        };
 
-      const ticketResponse = await fetch(ticketUrl, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: ticketParams,
-      });
+        const { data: res } = await axios.post(ticketUrl, ticketParams, {
+          headers: {
+            Authorization:
+              "Bearer Br1sd8BN024Nzt0_QR0WSG14fdXtUYDMVqmWvJe2Df5HIYZwHlPteDjY0ScwZA6z",
+            "Content-Type": "application/json",
+          },
+        });
 
-      console.log(ticketResponse.json());
+        console.log(res);
 
-      loaderEl.innerHTML = "";
+        loaderEl.innerHTML = "";
 
-      form.reset();
+        form.reset();
+
+        if (res) {
+          alert('Gutanga ikirego byagenze neza, Murakoze!')
+        }
       } catch (error) {
         loaderEl.innerHTML = "";
-        alert(error?.message)
+        alert(error?.message);
       }
     })();
   }
