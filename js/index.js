@@ -85,7 +85,7 @@ function validationform() {
           headers: {
             Authorization:
               "Bearer Br1sd8BN024Nzt0_QR0WSG14fdXtUYDMVqmWvJe2Df5HIYZwHlPteDjY0ScwZA6z",
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
         });
         console.log(data);
