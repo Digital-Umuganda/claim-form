@@ -4,7 +4,7 @@ function validationform() {
   const otherName = document.querySelector("#othernames")?.value;
   const nationId = document.querySelector("#nationid")?.value;
   const phoneNumber = document.querySelector("#phonenumber")?.value;
-  const visitorEmail = document.querySelector("#visitoremail")?.value;
+  const sectorName = document.querySelector("#sectorname")?.value;
   const districtName = document.querySelector("#districtname")?.value;
   const visitorMessage = document.querySelector("#visitormessage")?.value;
 
@@ -12,7 +12,7 @@ function validationform() {
   const lerror = document.querySelector("#error-othername");
   const iderror = document.querySelector("#error-nationid");
   const phonerror = document.querySelector("#error-phonenumber");
-  const emailerror = document.querySelector("#error-visitoremail");
+  const sectorerror = document.querySelector("#error-sector");
   const districterror = document.querySelector("#error-district");
   const messageerror = document.querySelector("#error-message");
 
@@ -42,11 +42,11 @@ function validationform() {
   } else {
     phonerror.innerHTML = "";
   }
-  if (!visitorEmail || visitorEmail.trim() === "") {
-    emailerror.innerHTML = "Uzuzamo imeri";
+  if (!sectorName || sectorName.trim() === "") {
+    sectorerror.innerHTML = "Uzuzamo imeri";
     isValid = false;
   } else {
-    emailerror.innerHTML = "";
+    sectorerror.innerHTML = "";
   }
   if (!districtName || districtName.trim() === "") {
     districterror.innerHTML = "Uzuzamo akarere";
@@ -66,7 +66,7 @@ function validationform() {
     const params = {
       firstname: firstName,
       lastname: otherName,
-      email: `${phoneNumber}@nchrcustomer.org.rw`,
+      email: `${phoneNumber}@email.com`,
       password: phoneNumber,
       login: "jdoe",
       roles: ["Customer"],
@@ -76,6 +76,7 @@ function validationform() {
     };
 
     const ticketUrl = "https://crm.mbaza.dev.cndp.org.rw/api/v1/tickets";
+    const addTag = "https://crm.mbaza.dev.cndp.org.rw/api/v1/tags/add"; 
 
     (async () => {
       const loaderEl = document.querySelector("#loading");
@@ -84,7 +85,7 @@ function validationform() {
         const { data } = await axios.post(signinUrl, params, {
           headers: {
             Authorization:
-              "Bearer Br1sd8BN024Nzt0_QR0WSG14fdXtUYDMVqmWvJe2Df5HIYZwHlPteDjY0ScwZA6z",
+              "Bearer TBCKKW3r4OnSQqCWeBatr4GmZeSbw8OK6mDAZAUHP-idIoK_yqxmgz-Aac806puM",
             "Content-Type": "application/json"
           },
         });
@@ -92,20 +93,43 @@ function validationform() {
 
         const ticketParams = {
           title: `${firstName} ${otherName}-${phoneNumber}`,
-          group_id: data.id,
+          group_id: 2,
           customer: `${phoneNumber}@email.com`,
           article: {
             subject: "Website form ticket",
-            body: `${firstName} ${otherName}\n${nationId}\n${phoneNumber}\nDistrict:${districtName}\nSector:sectorname\n\nMessage: ${visitorMessage}`,
+            body: `${firstName} ${otherName}\nID:${nationId}\nTel:${phoneNumber}\nDistrict:${districtName}\nSector:${sectorName}\n\n${visitorMessage}`,
             type: "note",
             internal: false,
           },
         };
 
         const { data: res } = await axios.post(ticketUrl, ticketParams, {
+          auth: {
+            username: `${phoneNumber}@email.com`,
+            password: `${phoneNumber}`,
+
+          },
           headers: {
-            Authorization:
-              "Bearer Br1sd8BN024Nzt0_QR0WSG14fdXtUYDMVqmWvJe2Df5HIYZwHlPteDjY0ScwZA6z",
+            "Content-Type": "application/json",
+          },
+        });
+
+
+        const ticketID = data.json.id
+        const tagParams = {
+          "object":"Ticket",
+          "o_id":`${ticketID}`,
+          "item": `${districtName}`
+
+        }
+
+        const { data1: res1 } = await axios.post(addTag, tagParams, {
+          auth: {
+            username: `${phoneNumber}@email.com`,
+            password: `${phoneNumber}`,
+
+          },
+          headers: {
             "Content-Type": "application/json",
           },
         });
