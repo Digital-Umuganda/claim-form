@@ -89,7 +89,6 @@ function validationform() {
             "Content-Type": "application/json"
           },
         });
-        console.log(data);
 
         const ticketParams = {
           title: `${firstName} ${otherName}-${phoneNumber}`,
@@ -133,8 +132,6 @@ function validationform() {
             "Content-Type": "application/json",
           },
         });
-
-        console.log(res);
 
         loaderEl.innerHTML = "";
 
