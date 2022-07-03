@@ -76,19 +76,34 @@ function validationform() {
     };
 
     const ticketUrl = "https://crm.mbaza.dev.cndp.org.rw/api/v1/tickets";
-    const addTag = "https://crm.mbaza.dev.cndp.org.rw/api/v1/tags/add"; 
+    const addTag = "https://crm.mbaza.dev.cndp.org.rw/api/v1/tags/add";
+    const queryUser = `https://crm.mbaza.dev.cndp.org.rw/api/v1/users/search?query=${params.email}@email.com&limit=1`;
 
     (async () => {
       const loaderEl = document.querySelector("#loading");
       try {
         loaderEl.innerHTML = "Mutegereze...";
-        const { data } = await axios.post(signinUrl, params, {
+
+        const { data: users } = await axios.get(queryUser, {
           headers: {
             Authorization:
               "Bearer TBCKKW3r4OnSQqCWeBatr4GmZeSbw8OK6mDAZAUHP-idIoK_yqxmgz-Aac806puM",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
         });
+
+        let user = users[0];
+
+        if (!user) {
+          const { data } = await axios.post(signinUrl, params, {
+            headers: {
+              Authorization:
+                "Bearer TBCKKW3r4OnSQqCWeBatr4GmZeSbw8OK6mDAZAUHP-idIoK_yqxmgz-Aac806puM",
+              "Content-Type": "application/json",
+            },
+          });
+          user = data;
+        }
 
         const ticketParams = {
           title: `${firstName} ${otherName}-${phoneNumber}`,
@@ -106,27 +121,23 @@ function validationform() {
           auth: {
             username: `${phoneNumber}@email.com`,
             password: `${phoneNumber}`,
-
           },
           headers: {
             "Content-Type": "application/json",
           },
         });
 
-
-        const ticketID = data.id
+        const ticketID = user.id;
         const tagParams = {
-          "object":"Ticket",
-          "o_id":`${ticketID}`,
-          "item": `${districtName}`
-
-        }
+          object: "Ticket",
+          o_id: `${ticketID}`,
+          item: `${districtName}`,
+        };
 
         const { data1: res1 } = await axios.post(addTag, tagParams, {
           auth: {
             username: `${phoneNumber}@email.com`,
             password: `${phoneNumber}`,
-
           },
           headers: {
             "Content-Type": "application/json",
@@ -138,7 +149,7 @@ function validationform() {
         form.reset();
 
         if (res) {
-          alert('Gutanga ikirego byagenze neza, Murakoze!')
+          alert("Gutanga ikirego byagenze neza, Murakoze!");
         }
       } catch (error) {
         loaderEl.innerHTML = "";
