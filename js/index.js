@@ -127,7 +127,7 @@ function validationform() {
           },
         });
 
-        const ticketID = user.id;
+        const ticketID = res.id;
         const tagParams = {
           object: "Ticket",
           o_id: `${ticketID}`,
@@ -149,7 +149,7 @@ function validationform() {
         form.reset();
 
         if (res) {
-          alert("Gutanga ikirego byagenze neza, Murakoze!");
+          window.location.href = "/feedback.html";
         }
       } catch (error) {
         loaderEl.innerHTML = "";
