@@ -20,14 +20,14 @@ body {
   width: 100%;
   padding: 25px 30px;
   border-radius: 25px;
-  background: linear-gradient(135deg, #3d6cb9, #c5e3f6);
+  background: linear-gradient(135deg, #073c9a, #1993df);
 }
 .container .heading {
   font-size: 25px;
   font-weight: 800;
   position: relative;
   text-align: center;
-  padding: 0 0 20px 0;
+  padding: 0 0 1px 10;
 }
 .container .heading::before {
   position: absolute;
@@ -106,7 +106,7 @@ form .btn button {
   /* height: 50%;
   width: 50%; */
   outline: none;
-  background-color: rgb(35, 119, 168);
+  background-color: rgb(164, 186, 199);
   color: #fff;
   border: none;
   text-decoration: none;
@@ -122,7 +122,8 @@ form .btn button {
 }
 form .btn button:hover {
   background-color: #fff;
-  color: rgb(35, 119, 168);
+  color: #7f8faa;
+  /* color: rgb(35, 119, 168); */
   font-weight: 600;
 }
 .button-section {
