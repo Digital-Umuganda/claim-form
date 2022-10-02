@@ -104,6 +104,7 @@ function validationform() {
     const ticketUrl = "https://crm.mbaza.dev.cndp.org.rw/api/v1/tickets";
     const addTag = "https://crm.mbaza.dev.cndp.org.rw/api/v1/tags/add";
     const queryUser = `https://crm.mbaza.dev.cndp.org.rw/api/v1/users/search?query=${params.email}@email.com&limit=1`;
+    
 
     (async () => {
       const loaderEl = document.querySelector("#loading");
@@ -220,7 +221,166 @@ const ticketID = res.id;
   }
 }
 
+
+
+/* 
+   codes for province, district, sector, cell and village exchange selection
+
+*/
+
+let Data = '';
+const province = document.querySelector("#provincename");
+const district = document.querySelector('#districtname');
+const sector = document.querySelector("#sectorname");
+const cell = document.querySelector("#cellname");
+const village = document.querySelector("#villagename");
+const articleUrl = "https://crm.mbaza.dev.cndp.org.rw/api/v1/ticket_articles";
+
+
+let dt = '';
+ (async()=>{
+  dt = await fetch('./data.json');
+  dt = await dt.json();
+})();
+
+let provObj = '';
+let emptyTag = `<option value=""></option>`;
+province.addEventListener("change", ()=>{
+    if(province.value == ""){
+      district.innerHTML= emptyTag;
+      sector.innerHTML = emptyTag;
+      cell.innerHTML = emptyTag;
+      village.innerHTML = emptyTag;
+    }
+    provObj = dt[province.value];
+    let prov =Object.keys(dt[province.value]);
+    let optionHtml = generateHTML(prov, dt[province.value]);
+    district.innerHTML = optionHtml;
+   
+    sector.innerHTML = emptyTag;
+    cell.innerHTML = emptyTag;
+    village.innerHTML =emptyTag;
+})
+
+let distrObj = '';
+district.addEventListener("change", () =>{
+
+  if(district.value == ""){
+    sector.innerHTML = emptyTag;
+    cell.innerHTML = emptyTag;
+    village.innerHTML = emptyTag;
+  }
+
+  let distr = Object.keys(provObj[district.value]);
+  distrObj = provObj[district.value];
+  let optionHtml = generateHTML(distr, distrObj);
+  sector.innerHTML = optionHtml;
+
+  cell.innerHTML = emptyTag;
+  village.innerHTML = emptyTag;
+});
+
+let cellObj = '';
+sector.addEventListener("change", ()=>{
+
+  if(sector.value == ""){
+    cell.innerHTML = emptyTag;
+    village.innerHTML = emptyTag;
+  }
+
+  let cll = Object.keys(distrObj[sector.value]);
+  cellObj = distrObj[sector.value];
+  let optionHtml = generateHTML(cll, cellObj);
+  cell.innerHTML = optionHtml;
+
+  village.innerHTML = emptyTag;
+});
+
+cell.addEventListener("change", () =>{
+
+  if(cell.value == ""){
+    village.innerHTML = emptyTag;
+  }
+
+  let vill = Object.keys(cellObj[cell.value]);
+  villageObj = cellObj[cell.value];
+  let optionHtml = generateHTML(villageObj, villageObj);
+  village.innerHTML = optionHtml;
+});
+
+
+const generateHTML = (arrList, Obj) =>{
+  let output = `<option value="">-- Hitamo --</option>`;
+  arrList.map((item)=>{
+    output += `<option value='${item}'>${item}</option>`;
+  });
+  return output;
+}
+
+const file = document.querySelector("#filename");
+let Files = [];
+
+file.addEventListener("change", ()=>{
+  for(let i=0; i < file.files.length; i++){
+    Files.push(file.files[i]);
+  }
+});
+
+var inputs = document.querySelectorAll( '.fileclass' );
+Array.prototype.forEach.call( inputs, function( input )
+{
+	var label	 = input.nextElementSibling;
+  let	labelVal = label.innerHTML;
+
+	input.addEventListener( 'change', function( e )
+	{
+		var fileName = '';
+		if( this.files && this.files.length > 1 )
+			fileName = ( this.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', this.files.length );
+		else
+			fileName = input.files[0].name;
+
+		if( fileName )
+			label.innerHTML = fileName;
+		else
+			label.innerHTML = "something wrong";
+	});
+});
+
+
+
+let dataObj = {
+  ticket_id: 102,
+  to: "",
+  cc: "",
+  subject: "some subject",
+  body: "Please see attached file...",
+  content_type: "text/plain",
+  type: "note",
+  internal: true,
+  time_unit: "25",
+  attachments: Files
+};
+
+const sendFiles = async () =>{
+  const { data: res } = await axios.post(articleUrl, dataObj, {
+    auth: {
+      username: `${121212121212}@email.com`,
+      password: `${121212121212}`,
+    },
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+
+
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   validationform();
+  if(file.files.length > 0){
+    sendFiles();
+  }
 });
+
