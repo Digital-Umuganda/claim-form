@@ -24,6 +24,8 @@ function validationform() {
   const villageerror = document.querySelector("#error-village")
   const messageerror = document.querySelector("#error-message");
 
+  const file = document.querySelector("#filename");
+
   let isValid = true;
 
   if (!firstName || firstName.trim() === "") {
@@ -86,6 +88,25 @@ function validationform() {
   } else {
     messageerror.innerHTML = "";
   }
+
+  const sendFiles = async () =>{
+    const { data: res } = await axios.post(articleUrl, dataObj, {
+      auth: {
+        username: `${phoneNumber}@email.com`,
+        password: `${phoneNumber}`,
+      },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+
+  // check if any files added
+  if(file.files.length > 0){
+    sendFiles();
+  }
+
+  
 
   if (isValid) {
     const signinUrl = "https://crm.mbaza.dev.cndp.org.rw/api/v1/users";
@@ -340,10 +361,19 @@ Array.prototype.forEach.call( inputs, function( input )
 		else
 			fileName = input.files[0].name;
 
-		if( fileName )
-			label.innerHTML = fileName;
-		else
+		if( fileName ){
+        if(fileName.length > 15){
+          label.innerHTML = fileName.slice(0,15) + '...' + fileName.slice(-5);
+
+        }
+        else{
+          label.innerHTML = fileName;
+        }
+    }
+		else{
+      
 			label.innerHTML = "something wrong";
+    }
 	});
 });
 
@@ -362,25 +392,8 @@ let dataObj = {
   attachments: Files
 };
 
-const sendFiles = async () =>{
-  const { data: res } = await axios.post(articleUrl, dataObj, {
-    auth: {
-      username: `${121212121212}@email.com`,
-      password: `${121212121212}`,
-    },
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-}
-
-
-
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   validationform();
-  if(file.files.length > 0){
-    sendFiles();
-  }
 });
 

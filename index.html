@@ -114,8 +114,19 @@
             </select>
             <div id="error-village" class="error"></div>
           </div>
+          <div class="card-box-textarea input-control">
+            <label class="Message-box" for="visitormessage"
+              >Ubutumwa/Message</label
+            >
+            <textarea
+              type="text"
+              id="visitormessage"
+              placeholder="Ubutumwa"
+            ></textarea>
+            <div class="error" id="error-message"></div>
+          </div>
           <div class="card-box di input-control">
-            <label class="input-card" for="filename">Files</label>
+            <label class="input-card" for="filename">Files</label><br/>
             <input type="file" name="filename" accept="image/png, image/jpeg, image/jpg,.doc,.docx,application/msword,.pdf" multiple id="filename" class="fileclass" data-multiple-caption="{count} files selected"/>
             <label id="labelInput" for="filename">Choose a file</label>
             <div id="error-files" class="error"></div>
@@ -123,17 +134,7 @@
 
           <!-- /////////////////////////////////////////////////////////////////////////// -->
         </div>
-        <div class="card-box-textarea input-control">
-          <label class="Message-box" for="visitormessage"
-            >Ubutumwa/Message</label
-          >
-          <textarea
-            type="text"
-            id="visitormessage"
-            placeholder="Ubutumwa"
-          ></textarea>
-          <div class="error" id="error-message"></div>
-        </div>
+        
         <div id="loading"></div>
         <div class="button-section">
           <div class="btn">
