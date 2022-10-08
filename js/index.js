@@ -1,4 +1,6 @@
 const form = document.querySelector("#takevalue");
+  // this Files is a global variable to store files added 
+  var Files = []
 function validationform() {
   const firstName = document.querySelector("#firstname")?.value;
   const otherName = document.querySelector("#othernames")?.value;
@@ -89,24 +91,7 @@ function validationform() {
     messageerror.innerHTML = "";
   }
 
-  const sendFiles = async () =>{
-    const { data: res } = await axios.post(articleUrl, dataObj, {
-      auth: {
-        username: `${phoneNumber}@email.com`,
-        password: `${phoneNumber}`,
-      },
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
 
-  // check if any files added
-  if(file.files.length > 0){
-    sendFiles();
-  }
-
-  
 
   if (isValid) {
     const signinUrl = "https://crm.mbaza.dev.cndp.org.rw/api/v1/users";
@@ -226,6 +211,38 @@ const ticketID = res.id;
             "Content-Type": "application/json",
           },
         });
+        // send files 
+
+        let dataObj = {
+          ticket_id: ticketID,
+          to: "",
+          cc: "",
+          subject: "some subject",
+          body: "Please see attached file...",
+          content_type: "text/plain",
+          type: "note",
+          internal: true,
+          time_unit: "25",
+          attachments: Files
+        };
+          const sendFiles = async () =>{
+            const { data: res } = await axios.post(articleUrl, dataObj, {
+              auth: {
+                username: `${phoneNumber}@email.com`,
+                password: `${phoneNumber}`,
+              },
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+          }
+
+          // check if any files added
+          if(file.files.length > 0){
+            sendFiles();
+          }
+
+  
 
         loaderEl.innerHTML = "";
 
@@ -339,7 +356,7 @@ const generateHTML = (arrList, Obj) =>{
 }
 
 const file = document.querySelector("#filename");
-let Files = [];
+
 
 file.addEventListener("change", ()=>{
   for(let i=0; i < file.files.length; i++){
@@ -379,18 +396,6 @@ Array.prototype.forEach.call( inputs, function( input )
 
 
 
-let dataObj = {
-  ticket_id: 102,
-  to: "",
-  cc: "",
-  subject: "some subject",
-  body: "Please see attached file...",
-  content_type: "text/plain",
-  type: "note",
-  internal: true,
-  time_unit: "25",
-  attachments: Files
-};
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
