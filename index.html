@@ -57,7 +57,30 @@
             <label class="input-card" for="provincename"
               >Intara/Province</label
             >
-            <input type="text" id="provincename" placeholder="Intara" />
+            <select id="provincename" placeholder="Intara">
+              <option value="">Intara</option>
+              <option value="Kigali">Kigali</option>
+              <option value="North">Amajyaruguru</option>
+              <option value="South">Amajyepfo</option>
+              <option value="East">Iburasirazuba</option>
+              <option value="West">Iburengerazuba</option> 
+            </select>
+            <!-- <select id="district">
+              <option></option>
+            </select>
+
+            <select id="sector">
+              <option value="none"></option>
+            </select>
+
+            <select id="cell">
+              <option value="none"></option>
+            </select>
+            <select id="village">
+              <option value="none"> </option>
+            </select> -->
+<!-- 
+            <input type="text" id="provincename" placeholder="Intara" /> -->
             <div id="error-province" class="error"></div>
           </div>
           <!-- ///////////////////////////////////////////////////////////// -->
@@ -65,40 +88,55 @@
             <label class="input-card" for="districtname"
               >Akarere/District</label
             >
-            <input type="text" id="districtname" placeholder="Akarere" />
+            <select id="districtname">
+              <option value=""></option>
+            </select>
             <div id="error-district" class="error"></div>
           </div>
           <div class="card-box di input-control">
             <label class="input-card" for="sectorname">Umurenge/Sector</label>
-            <input type="text" id="sectorname" placeholder="Umurenge" />
+            <select id="sectorname">
+              <option value=""></option>
+            </select>
             <div id="error-sector" class="error"></div>
           </div>
           <div class="card-box di input-control">
             <label class="input-card" for="cellname">Akagari/Cell</label>
-            <input type="text" id="cellname" placeholder="Akagari" />
+            <select id="cellname">
+              <option value=""></option>
+            </select>
             <div id="error-cell" class="error"></div>
           </div>
           <div class="card-box di input-control">
             <label class="input-card" for="villagename">Umudugudu/Village</label>
-            <input type="text" id="villagename" placeholder="Umudugudu" />
+            <select id="villagename">
+              <option value=""></option>
+            </select>
             <div id="error-village" class="error"></div>
+          </div>
+          <div class="card-box-textarea input-control">
+            <label class="Message-box" for="visitormessage"
+              >Ubutumwa/Message</label
+            >
+            <textarea
+              type="text"
+              id="visitormessage"
+              placeholder="Ubutumwa"
+            ></textarea>
+            <div class="error" id="error-message"></div>
+          </div>
+          <div class="card-box di input-control">
+            <label class="input-card" for="filename">Files</label><br/>
+            <input type="file" name="filename" accept="image/png, image/jpeg, image/jpg,.doc,.docx,application/msword,.pdf" multiple id="filename" class="fileclass" data-multiple-caption="{count} files selected"/>
+            <label id="labelInput" for="filename">Choose a file</label>
+            <div id="error-files" class="error"></div>
           </div>
 
           <!-- /////////////////////////////////////////////////////////////////////////// -->
         </div>
-        <div class="card-box-textarea input-control">
-          <label class="Message-box" for="visitormessage"
-            >Ubutumwa/Message</label
-          >
-          <textarea
-            type="text"
-            id="visitormessage"
-            placeholder="Ubutumwa"
-          ></textarea>
-          <div class="error" id="error-message"></div>
-        </div>
+        
         <div id="loading"></div>
-        <div class="button-section">
+        <div class="button-section" id="videoCheck">
           <div class="btn">
             <button id="button-send" type="submit">Ohereza / Submit</button>
           </div>

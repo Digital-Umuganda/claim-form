@@ -1,4 +1,6 @@
 const form = document.querySelector("#takevalue");
+  // this Files is a global variable to store files added 
+  var Files = []
 function validationform() {
   const firstName = document.querySelector("#firstname")?.value;
   const otherName = document.querySelector("#othernames")?.value;
@@ -23,6 +25,8 @@ function validationform() {
   const cellerror = document.querySelector("#error-cell");
   const villageerror = document.querySelector("#error-village")
   const messageerror = document.querySelector("#error-message");
+
+  const file = document.querySelector("#filename");
 
   let isValid = true;
 
@@ -87,6 +91,8 @@ function validationform() {
     messageerror.innerHTML = "";
   }
 
+
+
   if (isValid) {
     const signinUrl = "https://crm.mbaza.dev.cndp.org.rw/api/v1/users";
     const params = {
@@ -104,6 +110,7 @@ function validationform() {
     const ticketUrl = "https://crm.mbaza.dev.cndp.org.rw/api/v1/tickets";
     const addTag = "https://crm.mbaza.dev.cndp.org.rw/api/v1/tags/add";
     const queryUser = `https://crm.mbaza.dev.cndp.org.rw/api/v1/users/search?query=${params.email}@email.com&limit=1`;
+    
 
     (async () => {
       const loaderEl = document.querySelector("#loading");
@@ -136,7 +143,7 @@ function validationform() {
           group_id: 2,
           customer: `${phoneNumber}@email.com`,
           article: {
-            subject: "Website form ticket",
+            subject: "Website form ticket",
             body: `Name: ${firstName} ${otherName}\nID: ${nationId}\nTel: ${phoneNumber}\nProvince: ${provinceName}\nDistrict: ${districtName}\nSector: ${sectorName}\nCell: ${cellName}\nVillage: ${villageName}\n\n${visitorMessage}`,
             type: "note",
             internal: false,
@@ -204,6 +211,38 @@ const ticketID = res.id;
             "Content-Type": "application/json",
           },
         });
+        // send files 
+
+        let dataObj = {
+          ticket_id: ticketID,
+          to: "",
+          cc: "",
+          subject: "some subject",
+          body: "Please see attached file...",
+          content_type: "text/plain",
+          type: "note",
+          internal: true,
+          time_unit: "25",
+          attachments: Files
+        };
+          const sendFiles = async () =>{
+            const { data: res } = await axios.post(articleUrl, dataObj, {
+              auth: {
+                username: `${phoneNumber}@email.com`,
+                password: `${phoneNumber}`,
+              },
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+          }
+
+          // check if any files added
+          if(file.files.length > 0){
+            sendFiles();
+          }
+
+  
 
         loaderEl.innerHTML = "";
 
@@ -219,6 +258,164 @@ const ticketID = res.id;
     })();
   }
 }
+
+
+
+/* 
+   codes for province, district, sector, cell and village exchange selection
+
+*/
+
+let Data = '';
+const province = document.querySelector("#provincename");
+const district = document.querySelector('#districtname');
+const sector = document.querySelector("#sectorname");
+const cell = document.querySelector("#cellname");
+const village = document.querySelector("#villagename");
+const articleUrl = "https://crm.mbaza.dev.cndp.org.rw/api/v1/ticket_articles";
+
+
+let dt = '';
+ (async()=>{
+  dt = await fetch('./data.json');
+  dt = await dt.json();
+})();
+
+let provObj = '';
+let emptyTag = `<option value=""></option>`;
+province.addEventListener("change", ()=>{
+    if(province.value == ""){
+      district.innerHTML= emptyTag;
+      sector.innerHTML = emptyTag;
+      cell.innerHTML = emptyTag;
+      village.innerHTML = emptyTag;
+    }
+    provObj = dt[province.value];
+    let prov =Object.keys(dt[province.value]);
+    let optionHtml = generateHTML(prov, dt[province.value]);
+    district.innerHTML = optionHtml;
+   
+    sector.innerHTML = emptyTag;
+    cell.innerHTML = emptyTag;
+    village.innerHTML =emptyTag;
+})
+
+let distrObj = '';
+district.addEventListener("change", () =>{
+
+  if(district.value == ""){
+    sector.innerHTML = emptyTag;
+    cell.innerHTML = emptyTag;
+    village.innerHTML = emptyTag;
+  }
+
+  let distr = Object.keys(provObj[district.value]);
+  distrObj = provObj[district.value];
+  let optionHtml = generateHTML(distr, distrObj);
+  sector.innerHTML = optionHtml;
+
+  cell.innerHTML = emptyTag;
+  village.innerHTML = emptyTag;
+});
+
+let cellObj = '';
+sector.addEventListener("change", ()=>{
+
+  if(sector.value == ""){
+    cell.innerHTML = emptyTag;
+    village.innerHTML = emptyTag;
+  }
+
+  let cll = Object.keys(distrObj[sector.value]);
+  cellObj = distrObj[sector.value];
+  let optionHtml = generateHTML(cll, cellObj);
+  cell.innerHTML = optionHtml;
+
+  village.innerHTML = emptyTag;
+});
+
+cell.addEventListener("change", () =>{
+
+  if(cell.value == ""){
+    village.innerHTML = emptyTag;
+  }
+
+  let vill = Object.keys(cellObj[cell.value]);
+  villageObj = cellObj[cell.value];
+  let optionHtml = generateHTML(villageObj, villageObj);
+  village.innerHTML = optionHtml;
+});
+
+
+const generateHTML = (arrList, Obj) =>{
+  let output = `<option value="">-- Hitamo --</option>`;
+  arrList.map((item)=>{
+    output += `<option value='${item}'>${item}</option>`;
+  });
+  return output;
+}
+
+const file = document.querySelector("#filename");
+const convertBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+          resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+          reject(error);
+      };
+  });
+};
+
+
+file.addEventListener("change", async ()=>{
+  for(let i=0; i < file.files.length; i++){
+    const base64 = await convertBase64(file.files[i]);
+    const toUpload = {
+      filename: file.files[i].name,
+      data: base64,
+      "mime-type": file.files[i].type
+    }
+    Files.push(toUpload);
+  }
+});
+
+var inputs = document.querySelectorAll( '.fileclass' );
+Array.prototype.forEach.call( inputs, function( input )
+{
+	var label	 = input.nextElementSibling;
+  let	labelVal = label.innerHTML;
+
+	input.addEventListener( 'change', function( e )
+	{
+		var fileName = '';
+		if( this.files && this.files.length > 1 )
+			fileName = ( this.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', this.files.length );
+		else
+			fileName = input.files[0].name;
+
+		if( fileName ){
+        if(fileName.length > 15){
+          label.innerHTML = fileName.slice(0,15) + '...' + fileName.slice(-5);
+
+        }
+        else{
+          label.innerHTML = fileName;
+        }
+    }
+		else{
+      
+			label.innerHTML = "something wrong";
+    }
+	});
+});
+
+
+
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
