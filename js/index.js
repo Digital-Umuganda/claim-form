@@ -143,7 +143,7 @@ function validationform() {
           group_id: 2,
           customer: `${phoneNumber}@email.com`,
           article: {
-            subject: "Website form ticket",
+            subject: "Website form ticket",
             body: `Name: ${firstName} ${otherName}\nID: ${nationId}\nTel: ${phoneNumber}\nProvince: ${provinceName}\nDistrict: ${districtName}\nSector: ${sectorName}\nCell: ${cellName}\nVillage: ${villageName}\n\n${visitorMessage}`,
             type: "note",
             internal: false,
@@ -356,11 +356,31 @@ const generateHTML = (arrList, Obj) =>{
 }
 
 const file = document.querySelector("#filename");
+const convertBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+          resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+          reject(error);
+      };
+  });
+};
 
 
-file.addEventListener("change", ()=>{
+file.addEventListener("change", async ()=>{
   for(let i=0; i < file.files.length; i++){
-    Files.push(file.files[i]);
+    const base64 = await convertBase64(file.files[i]);
+    const toUpload = {
+      filename: file.files[i].name,
+      data: base64,
+      "mime-type": file.files[i].type
+    }
+    Files.push(toUpload);
   }
 });
 
@@ -401,4 +421,3 @@ form.addEventListener("submit", (event) => {
   event.preventDefault();
   validationform();
 });
-
